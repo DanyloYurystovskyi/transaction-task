@@ -12,6 +12,7 @@ namespace TransactionService.DAL.Entities
         [MaxLength(50)]
         public string TransactionId { get; set; }
 
+        //default 18,2 precision is good enough
         public decimal Amount { get; set; }
 
         [MaxLength(3)]
