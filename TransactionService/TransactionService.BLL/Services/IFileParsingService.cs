@@ -8,7 +8,7 @@ using TransactionService.DAL.Entities;
 
 namespace TransactionService.BLL.Services
 {
-    public interface ITransactionDataService
+    public interface IFileParsingService
     {
         Task<FileParsingResult> ParseCsvFile(Stream stream);
 

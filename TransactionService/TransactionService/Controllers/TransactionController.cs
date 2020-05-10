@@ -14,15 +14,15 @@ namespace TransactionService.Controllers
     public class TransactionController : Controller
     {
         private readonly ILogger<TransactionController> _logger;
-        private readonly ITransactionDataService _transactionDataService;
+        private readonly IFileParsingService _fileParsingService;
 
         private const string CONTENT_TYPE_CSV = "application/vnd.ms-excel";
         private const string CONTENT_TYPE_XML = "text/xml";
 
-        public TransactionController(ILogger<TransactionController> logger, ITransactionDataService transactionDataService)
+        public TransactionController(ILogger<TransactionController> logger, IFileParsingService fileParsingService)
         {
             _logger = logger;
-            _transactionDataService = transactionDataService;
+            _fileParsingService = fileParsingService;
         }
 
         [HttpGet]
@@ -38,10 +38,10 @@ namespace TransactionService.Controllers
             switch(file.ContentType)
             {
                 case CONTENT_TYPE_CSV:
-                    fileContents = await _transactionDataService.ParseCsvFile(file.OpenReadStream());
+                    fileContents = await _fileParsingService.ParseCsvFile(file.OpenReadStream());
                     break;
                 case CONTENT_TYPE_XML:
-                    fileContents = await _transactionDataService.ParseXmlFile(file.OpenReadStream());
+                    fileContents = await _fileParsingService.ParseXmlFile(file.OpenReadStream());
                     break;
                 default:
                     return BadRequest("Unknown format");

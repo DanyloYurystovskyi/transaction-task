@@ -14,7 +14,7 @@ namespace TransactionService.BLL.Models.Csv
 {
     public class CsvRowParser : ITypeConverter
     {
-        private const string DATE_FORMAT = "dd/MM/yyyy hh:mm:ss";
+        private const string DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
         public object ConvertFromString(string text, IReaderRow row, MemberMapData memberMapData)
         {

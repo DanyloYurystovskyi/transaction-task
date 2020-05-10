@@ -40,7 +40,7 @@ namespace TransactionService
 
             services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddTransient<ITransactionDataService, TransactionDataService>();
+            services.AddTransient<IFileParsingService, FileParsingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

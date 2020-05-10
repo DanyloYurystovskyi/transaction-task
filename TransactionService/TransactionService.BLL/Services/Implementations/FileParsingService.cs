@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using TransactionService.BLL.Extensions;
 using TransactionService.BLL.Models;
 using TransactionService.BLL.Models.Csv;
 using TransactionService.BLL.Models.Xml;
@@ -18,12 +19,12 @@ using TransactionService.DAL.UnitOfWork;
 
 namespace TransactionService.BLL.Services.Implementations
 {
-    public class TransactionDataService : ITransactionDataService
+    public class FileParsingService : IFileParsingService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IGenericRepository<TransactionRecord> _transactionRepository;
 
-        public TransactionDataService(IUnitOfWork unitOfWork, IGenericRepository<TransactionRecord> transactionRepository)
+        public FileParsingService(IUnitOfWork unitOfWork, IGenericRepository<TransactionRecord> transactionRepository)
         {
             _unitOfWork = unitOfWork;
             _transactionRepository = transactionRepository;
@@ -42,8 +43,7 @@ namespace TransactionService.BLL.Services.Implementations
             {
                 IsValid = !resultContainers.Any(c => !c.Result.IsValid),
                 ValidTransactions = resultContainers.Where(c => c.Result.IsValid).Select(c => c.Result.Record),
-                ErrorMessage = string.Join(string.Empty, 
-                    resultContainers.Where(c => !c.Result.IsValid).Select(c => c.Result.RawRow))
+                NotValidatedRecords = resultContainers.Where(c => !c.Result.IsValid).Select(c => c.Result.RawRow)
             };
         }
 
@@ -56,8 +56,16 @@ namespace TransactionService.BLL.Services.Implementations
 
             try
             {
-                var res = (List<XmlRawTransactionRecord>)xmlSerializer.Deserialize(xmlReader);
-                return null;
+                var rawRecords = (List<XmlRawTransactionRecord>)xmlSerializer.Deserialize(xmlReader);
+                var validTransactions = rawRecords
+                    .Where(r => r.IsValid())
+                    .Select(r => r.ConvertToTransactionRecord())
+                    .ToList();
+                return new FileParsingResult
+                {
+                    IsValid = rawRecords.Count == validTransactions.Count,
+                    ValidTransactions = validTransactions
+                };
             }
             catch (InvalidOperationException ex)
             {
