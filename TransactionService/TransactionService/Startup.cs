@@ -5,11 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TransactionService.BLL.Services;
+using TransactionService.BLL.Services.Implementations;
 using TransactionService.DAL;
+using TransactionService.DAL.Repositories;
+using TransactionService.DAL.Repositories.Implementations;
+using TransactionService.DAL.UnitOfWork;
+using TransactionService.DAL.UnitOfWork.Implementations;
 
 namespace TransactionService
 {
@@ -27,8 +34,13 @@ namespace TransactionService
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
+            //scoped lifetime by default
             services.AddDbContext<TransactionServiceContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
+
+            services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<ITransactionDataService, TransactionDataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

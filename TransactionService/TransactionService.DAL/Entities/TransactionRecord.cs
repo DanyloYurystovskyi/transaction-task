@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using TransactionService.DAL.Entities.Enums;
 
 namespace TransactionService.DAL.Entities
 {
-    public class Transaction
+    public class TransactionRecord
     {
-
+        [Key]
         [MaxLength(50)]
         public string TransactionId { get; set; }
 
@@ -20,6 +21,6 @@ namespace TransactionService.DAL.Entities
 
         public DateTime Date { get; set; }
 
-        public TransactionStatus Status { get; set; }
+        public TransactionRecordStatus Status { get; set; }
     }
 }

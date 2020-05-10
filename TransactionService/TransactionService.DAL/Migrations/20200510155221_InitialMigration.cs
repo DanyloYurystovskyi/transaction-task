@@ -11,16 +11,15 @@ namespace TransactionService.DAL.Migrations
                 name: "Transactions",
                 columns: table => new
                 {
-                    TransactionId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CurrencyCode = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: true),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    TransactionId = table.Column<string>(maxLength: 50, nullable: false),
+                    Amount = table.Column<decimal>(nullable: false),
+                    CurrencyCode = table.Column<string>(maxLength: 3, nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
+                    Status = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transactions", x => x.TransactionId);
-                    table.CheckConstraint("CK_Transactions_Status_Enum_Constraint", "[Status] IN(65, 68, 82)");
                 });
         }
 

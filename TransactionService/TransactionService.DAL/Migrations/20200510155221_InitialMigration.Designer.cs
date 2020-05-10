@@ -10,18 +10,18 @@ using TransactionService.DAL;
 namespace TransactionService.DAL.Migrations
 {
     [DbContext(typeof(TransactionServiceContext))]
-    [Migration("20200508122311_InitialMigration")]
+    [Migration("20200510155221_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.0-preview.3.20181.2")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("TransactionService.DAL.Entities.Transaction", b =>
+            modelBuilder.Entity("TransactionService.DAL.Entities.TransactionRecord", b =>
                 {
                     b.Property<string>("TransactionId")
                         .HasColumnType("nvarchar(50)")
@@ -43,8 +43,6 @@ namespace TransactionService.DAL.Migrations
                     b.HasKey("TransactionId");
 
                     b.ToTable("Transactions");
-
-                    b.HasCheckConstraint("CK_Transactions_Status_Enum_Constraint", "[Status] IN(65, 68, 82)");
                 });
 #pragma warning restore 612, 618
         }

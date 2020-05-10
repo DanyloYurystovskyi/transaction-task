@@ -15,6 +15,6 @@ namespace TransactionService.DAL
         {
         }
 
-        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<TransactionRecord> Transactions { get; set; }
     }
 }

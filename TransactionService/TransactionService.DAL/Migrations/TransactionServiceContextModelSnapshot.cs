@@ -15,11 +15,11 @@ namespace TransactionService.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.0-preview.3.20181.2")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("TransactionService.DAL.Entities.Transaction", b =>
+            modelBuilder.Entity("TransactionService.DAL.Entities.TransactionRecord", b =>
                 {
                     b.Property<string>("TransactionId")
                         .HasColumnType("nvarchar(50)")
@@ -41,8 +41,6 @@ namespace TransactionService.DAL.Migrations
                     b.HasKey("TransactionId");
 
                     b.ToTable("Transactions");
-
-                    b.HasCheckConstraint("CK_Transactions_Status_Enum_Constraint", "[Status] IN(65, 68, 82)");
                 });
 #pragma warning restore 612, 618
         }

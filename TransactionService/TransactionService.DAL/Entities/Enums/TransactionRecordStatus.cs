@@ -4,10 +4,11 @@ using System.Text;
 
 namespace TransactionService.DAL.Entities.Enums
 {
-    public enum TransactionStatus
+    public enum TransactionRecordStatus
     {
+        None = 'N',
         Approved = 'A',
         Failed = 'R', //Rejected
-        Finshed = 'D' //Done
+        Finished = 'D' //Done
     }
 }
