@@ -7,8 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 using TransactionService.BLL.Models;
 using TransactionService.BLL.Models.Csv;
+using TransactionService.BLL.Models.Xml;
 using TransactionService.DAL.Entities;
 using TransactionService.DAL.Repositories;
 using TransactionService.DAL.UnitOfWork;
@@ -38,15 +41,34 @@ namespace TransactionService.BLL.Services.Implementations
             return new FileParsingResult
             {
                 IsValid = !resultContainers.Any(c => !c.Result.IsValid),
-                Transactions = resultContainers.Where(c => c.Result.IsValid).Select(c => c.Result.Record),
-                ValidationMessage = string.Join(string.Empty, 
+                ValidTransactions = resultContainers.Where(c => c.Result.IsValid).Select(c => c.Result.Record),
+                ErrorMessage = string.Join(string.Empty, 
                     resultContainers.Where(c => !c.Result.IsValid).Select(c => c.Result.RawRow))
             };
         }
 
-        public Task<FileParsingResult> ParseXmlFile(Stream stream)
+        public async Task<FileParsingResult> ParseXmlFile(Stream stream)
         {
-            throw new NotImplementedException();
+            var xmlSerializer = new XmlSerializer(typeof(List<XmlRawTransactionRecord>), new XmlRootAttribute("Transactions"));
+            var xmlReaderSettings = new XmlReaderSettings();
+            xmlReaderSettings.Async = true;
+            var xmlReader = XmlReader.Create(stream, xmlReaderSettings);
+
+            try
+            {
+                var res = (List<XmlRawTransactionRecord>)xmlSerializer.Deserialize(xmlReader);
+                return null;
+            }
+            catch (InvalidOperationException ex)
+            {
+                return new FileParsingResult
+                {
+                    IsValid = false,
+                    ErrorMessage = ex.Message,
+                    ValidTransactions = { },
+                    NotValidatedRecords = new string[] { await xmlReader.ReadElementContentAsStringAsync() },
+                };
+            }
         }
 
         public Task SaveTransactions(IEnumerable<TransactionRecord> transactions)

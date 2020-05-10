@@ -53,7 +53,8 @@ namespace TransactionService.Controllers
             }
             else
             {
-                return BadRequest(fileContents.ValidationMessage);
+                //mapper!
+                return BadRequest(fileContents.NotValidatedRecords);
             }
         }
     }

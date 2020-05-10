@@ -9,8 +9,10 @@ namespace TransactionService.BLL.Models
     {
         public bool IsValid { get; set; }
 
-        public IEnumerable<TransactionRecord> Transactions { get; set; }
+        public IEnumerable<TransactionRecord> ValidTransactions { get; set; }
 
-        public string ValidationMessage { get; set; }
+        public string ErrorMessage { get; set; }
+
+        public IEnumerable<string> NotValidatedRecords { get; set; }
     }
 }
