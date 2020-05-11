@@ -32,7 +32,7 @@ namespace TransactionService.BLL.Extensions
 
             record = isValid ? new TransactionRecord
             {
-                TransactionId = rawRecord.id,
+                Id = rawRecord.id,
                 Amount = amount,
                 CurrencyCode = rawRecord.PaymentDetails.CurrencyCode,
                 Date = date,

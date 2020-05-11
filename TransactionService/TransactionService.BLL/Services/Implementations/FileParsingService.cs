@@ -23,13 +23,8 @@ namespace TransactionService.BLL.Services.Implementations
 {
     public class FileParsingService : IFileParsingService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IGenericRepository<TransactionRecord> _transactionRepository;
-
-        public FileParsingService(IUnitOfWork unitOfWork, IGenericRepository<TransactionRecord> transactionRepository)
+        public FileParsingService()
         {
-            _unitOfWork = unitOfWork;
-            _transactionRepository = transactionRepository;
         }
 
         public async Task<FileParsingResult> ParseCsvFile(Stream stream)
@@ -39,7 +34,7 @@ namespace TransactionService.BLL.Services.Implementations
             csv.Configuration.HasHeaderRecord = false;
             csv.Configuration.RegisterClassMap<CsvMap>();
             //due to how CsvHelper works, we must encapsulate parsing result inside container        
-            var resultContainers = await csv.GetRecordsAsync<CsvRowParsingResultContainer>().ToListAsync();
+            var resultContainers = await csv.GetRecordsAsync<RecordParsingResultContainer>().ToListAsync();
 
             return new FileParsingResult
             {
@@ -51,8 +46,20 @@ namespace TransactionService.BLL.Services.Implementations
 
         public async Task<FileParsingResult> ParseXmlFile(Stream stream)
         {
-            var xDoc = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, CancellationToken.None);
-            var transactionXmlElements = xDoc.Root.Elements("Transaction");
+            XDocument xDocument;
+            try
+            {
+                xDocument = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, CancellationToken.None);
+            }
+            catch(XmlException ex)
+            {
+                return new FileParsingResult
+                {
+                    IsValid = false,
+                    ParsingError = ex.Message
+                };
+            }
+            var transactionXmlElements = xDocument.Root.Elements("Transaction");
             var xmlSerializer = new XmlSerializer(typeof(XmlRawTransactionRecord));
 
             var parsingResults = transactionXmlElements.Select(el =>

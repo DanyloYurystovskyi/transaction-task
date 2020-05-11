@@ -5,7 +5,7 @@ using TransactionService.BLL.Models.Csv;
 
 namespace TransactionService.BLL.Models.Csv
 {
-    public class CsvRowParsingResultContainer
+    public class RecordParsingResultContainer
     {
         public RecordParsingResult Result { get; set; }
     }

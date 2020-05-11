@@ -41,7 +41,7 @@ namespace TransactionService.BLL.Models.Csv
                 RawString = row.Context.RawRecord,
                 Record = isValid ? new TransactionRecord
                 {
-                    TransactionId = transactionId,
+                    Id = transactionId,
                     Amount = amount,
                     CurrencyCode = currency,
                     Date = date,

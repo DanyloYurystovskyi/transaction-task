@@ -11,7 +11,7 @@ using TransactionService.DAL.Entities.Enums;
 
 namespace TransactionService.BLL.Models.Csv
 {
-    public sealed class CsvMap : ClassMap<CsvRowParsingResultContainer>
+    public sealed class CsvMap : ClassMap<RecordParsingResultContainer>
     {
         public CsvMap()
         {

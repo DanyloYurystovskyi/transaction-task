@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TransactionService.BLL.DTOs
 {
-    public class TransactionDTO
+    public class TransactionRecordDTO
     {
         public string Id { get; set; }
 

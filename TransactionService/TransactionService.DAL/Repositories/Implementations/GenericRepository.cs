@@ -5,10 +5,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using TransactionService.DAL.Entities;
 
 namespace TransactionService.DAL.Repositories.Implementations
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T, ID> : IGenericRepository<T, ID> where T : class, IEntity<ID>
     {
         private TransactionServiceContext _context;
 
@@ -17,30 +18,42 @@ namespace TransactionService.DAL.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
+        public T Get(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>()
-                .FirstOrDefaultAsync(predicate);
+            return  _context.Set<T>().FirstOrDefault(predicate);
         }
 
-        public async Task CreateAsync(T entity)
+        public void Create(T entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+             _context.Set<T>().Add(entity);
         }
 
-        public async Task DeleteAsync(T entity)
+        public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
         }
 
-        public async Task UpdateAsync(T entity)
+        public void Update(T entity)
         {
             _context.Set<T>().Update(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>().Where(predicate).ToListAsync();
+            return _context.Set<T>().Where(predicate);
+        }
+
+        public void CreateOrUpdate(T entity)
+        {
+            bool exists = _context.Set<T>().Any(e => e.Id.Equals(entity.Id));
+            if (exists)
+            {
+                Update(entity);
+            }
+            else
+            {
+                Create(entity);
+            }
         }
     }
 }

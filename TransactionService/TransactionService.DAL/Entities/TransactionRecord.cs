@@ -7,11 +7,11 @@ using TransactionService.DAL.Entities.Enums;
 
 namespace TransactionService.DAL.Entities
 {
-    public class TransactionRecord
+    public class TransactionRecord : IEntity<string>
     {
         [Key]
         [MaxLength(50)]
-        public string TransactionId { get; set; }
+        public string Id { get; set; }
 
         //default 18,2 precision is good enough
         public decimal Amount { get; set; }

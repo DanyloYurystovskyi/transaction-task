@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace TransactionService.DAL.Repositories
 {
-    public interface IGenericRepository<T>
+    public interface IGenericRepository<T, ID>
     {
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>> predicate);
-        Task<T> GetAsync(Expression<Func<T, bool>> predicate);
-        Task CreateAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
+        IEnumerable<T> GetAll(Expression<Func<T, bool>> predicate);
+        T Get(Expression<Func<T, bool>> predicate);
+        void Create(T entity);
+        void Update(T entity);
+        void Delete(T entity);
+        void CreateOrUpdate(T entity);
     }
 }

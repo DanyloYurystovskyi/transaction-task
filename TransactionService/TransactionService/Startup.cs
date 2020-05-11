@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TransactionService.BLL.Mappers;
+using TransactionService.BLL.Mappers.Implementations;
 using TransactionService.BLL.Services;
 using TransactionService.BLL.Services.Implementations;
 using TransactionService.DAL;
@@ -39,8 +41,11 @@ namespace TransactionService
                 options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
 
             services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();
-            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             services.AddTransient<IFileParsingService, FileParsingService>();
+            services.AddTransient<IDatabaseService, DatabaseService>();
+            services.AddScoped<IFileParsingResultMapper, FileParsingResultMapper>();
+            services.AddScoped<ITransactionRecordMapper, TransactionRecordMapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

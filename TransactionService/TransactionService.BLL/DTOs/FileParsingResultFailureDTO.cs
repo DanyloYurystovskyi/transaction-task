@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TransactionService.DAL.Entities;
 
-namespace TransactionService.BLL.Models
+namespace TransactionService.BLL.DTOs
 {
-    public class FileParsingResult
+    public class FileParsingResultFailureDTO
     {
         public bool IsValid { get; set; }
 
         public string ParsingError { get; set; }
-
-        public IEnumerable<TransactionRecord> ValidTransactions { get; set; }
 
         public IEnumerable<string> NotValidatedRecords { get; set; }
     }
