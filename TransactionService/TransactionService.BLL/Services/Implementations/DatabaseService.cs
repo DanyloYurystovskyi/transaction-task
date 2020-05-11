@@ -29,19 +29,24 @@ namespace TransactionService.BLL.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<TransactionRecord>> GetTransactionRecordsByCurrency(string currency)
+        public async Task<IEnumerable<TransactionRecord>> GetTransactionRecordsByCurrency(string currency)
         {
-            throw new NotImplementedException();
+            return _transactionRecordRepository.GetAll(r => r.CurrencyCode == currency);
         }
 
-        public Task<IEnumerable<TransactionRecord>> GetTransactionRecordsByCurrency(TransactionRecordStatus status)
+        public async Task<IEnumerable<TransactionRecord>> GetTransactionRecordsByStatus(TransactionRecordStatus status)
         {
-            throw new NotImplementedException();
+            return _transactionRecordRepository.GetAll(r => r.Status == status);
         }
 
-        public Task<IEnumerable<TransactionRecord>> GetTransactionRecordsByDateRange(DateTime? start, DateTime? end)
+        public async Task<IEnumerable<TransactionRecord>> GetTransactionRecordsByDateRange(DateTime start, DateTime end)
         {
-            throw new NotImplementedException();
+            return _transactionRecordRepository.GetAll(r => r.Date >= start && r.Date <= end);
+        }
+
+        public async Task<IEnumerable<TransactionRecord>> GetTransactionRecords()
+        {
+            return _transactionRecordRepository.GetAll(r => true);
         }
     }
 }

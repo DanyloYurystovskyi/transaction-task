@@ -14,7 +14,7 @@ namespace TransactionService.BLL.Mappers.Implementations
             {
                 Id = record.Id,
                 Payment = $"{record.Amount} {record.CurrencyCode}",
-                TransactionStatus = (char)record.Status
+                Status = (char)record.Status
             };
         }
     }

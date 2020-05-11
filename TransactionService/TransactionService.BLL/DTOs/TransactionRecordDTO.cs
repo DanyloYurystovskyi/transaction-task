@@ -10,6 +10,6 @@ namespace TransactionService.BLL.DTOs
 
         public string Payment { get; set; }
 
-        public char TransactionStatus { get; set; }
+        public char Status { get; set; }
     }
 }

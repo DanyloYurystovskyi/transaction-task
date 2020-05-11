@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using TransactionService.BLL.Mappers;
 using TransactionService.BLL.Mappers.Implementations;
 using TransactionService.BLL.Services;
@@ -35,6 +36,10 @@ namespace TransactionService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Transaction Records API", Version = "v1" });
+            });
 
             //scoped lifetime by default
             services.AddDbContext<TransactionServiceContext>(
@@ -63,6 +68,12 @@ namespace TransactionService
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Transaction Records API V1");
+            });
 
             app.UseRouting();
 
