@@ -32,7 +32,7 @@ namespace TransactionService.BLL.Models.Csv
             DateTime date = default;
             isValid = isValid && TryParseTransactionDate(row, out date);
             //Status
-            TransactionRecordStatus status = TransactionRecordStatus.None;
+            TransactionRecordStatus status = default;
             isValid = isValid && TryParseTransactionRecordStatus(row, out status);
 
             return new RecordParsingResult
@@ -71,7 +71,7 @@ namespace TransactionService.BLL.Models.Csv
                     statusStr, 
                     out statusObj);
 
-            status = statusObj != null ? (TransactionRecordStatus)statusObj : TransactionRecordStatus.None;
+            status = statusObj != null ? (TransactionRecordStatus)statusObj : default;
             return succesfullyParsed;
         }
 

@@ -6,7 +6,6 @@ namespace TransactionService.DAL.Entities.Enums
 {
     public enum TransactionRecordStatus
     {
-        None = 'N',
         Approved = 'A',
         Rejected = 'R',
         Done = 'D'

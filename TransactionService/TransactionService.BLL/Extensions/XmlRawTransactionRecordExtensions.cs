@@ -27,7 +27,7 @@ namespace TransactionService.BLL.Extensions
             DateTime date = default;
             isValid = isValid && TryParseTransactionDate(rawRecord.TransactionDate, out date);
             //Status
-            var status = TransactionRecordStatus.None;
+            TransactionRecordStatus status = default;
             isValid = isValid && TryParseTransactionRecordStatus(rawRecord.Status, out status);
 
             record = isValid ? new TransactionRecord
@@ -61,7 +61,7 @@ namespace TransactionService.BLL.Extensions
                 value,
                 out statusObj);
 
-            status = statusObj != null ? (TransactionRecordStatus)statusObj : TransactionRecordStatus.None;
+            status = statusObj != null ? (TransactionRecordStatus)statusObj : default;
             return succesfullyParsed;
         }
 
