@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using TransactionService.BLL.Mappers;
 using TransactionService.BLL.Mappers.Implementations;
 using TransactionService.BLL.Services;
@@ -45,8 +46,8 @@ namespace TransactionService
             services.AddDbContext<TransactionServiceContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
 
-            services.AddTransient<IUnitOfWork, EntityFrameworkUnitOfWork>();
-            services.AddTransient(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            services.AddScoped<IUnitOfWork, EntityFrameworkUnitOfWork>();
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
             services.AddTransient<IFileParsingService, FileParsingService>();
             services.AddTransient<IDatabaseService, DatabaseService>();
             services.AddScoped<IFileParsingResultMapper, FileParsingResultMapper>();

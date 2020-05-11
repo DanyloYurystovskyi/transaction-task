@@ -14,7 +14,6 @@ namespace TransactionService.Controllers
 {
     public class TransactionController : Controller
     {
-        private readonly ILogger<TransactionController> _logger;
         private readonly IDatabaseService _databaseService;
         private readonly IFileParsingService _fileParsingService;
         private readonly IFileParsingResultMapper _fileParsingResultMapper;
@@ -23,12 +22,10 @@ namespace TransactionService.Controllers
         private const string CONTENT_TYPE_XML = "text/xml";
 
         public TransactionController(
-            ILogger<TransactionController> logger, 
             IDatabaseService databaseService,
             IFileParsingService fileParsingService,
             IFileParsingResultMapper fileParsingResultMapper)
         {
-            _logger = logger;
             _databaseService = databaseService;
             _fileParsingService = fileParsingService;
             _fileParsingResultMapper = fileParsingResultMapper;

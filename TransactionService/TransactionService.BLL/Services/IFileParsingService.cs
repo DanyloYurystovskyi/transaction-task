@@ -13,7 +13,5 @@ namespace TransactionService.BLL.Services
         Task<FileParsingResult> ParseCsvFile(Stream stream);
 
         Task<FileParsingResult> ParseXmlFile(Stream stream);
-
-        Task SaveTransactions(IEnumerable<TransactionRecord> transactions);
     }
 }

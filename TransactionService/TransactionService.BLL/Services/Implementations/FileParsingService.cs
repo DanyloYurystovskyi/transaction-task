@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using Microsoft.EntityFrameworkCore.Internal;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -35,13 +36,7 @@ namespace TransactionService.BLL.Services.Implementations
             csv.Configuration.RegisterClassMap<CsvMap>();
             //due to how CsvHelper works, we must encapsulate parsing result inside container        
             var resultContainers = await csv.GetRecordsAsync<RecordParsingResultContainer>().ToListAsync();
-
-            return new FileParsingResult
-            {
-                IsValid = !resultContainers.Any(c => !c.Result.IsValid),
-                ValidTransactions = resultContainers.Where(c => c.Result.IsValid).Select(c => c.Result.Record),
-                NotValidatedRecords = resultContainers.Where(c => !c.Result.IsValid).Select(c => c.Result.RawString)
-            };
+            return GetFileParsingResult(resultContainers.Select(c => c.Result));
         }
 
         public async Task<FileParsingResult> ParseXmlFile(Stream stream)
@@ -53,6 +48,7 @@ namespace TransactionService.BLL.Services.Implementations
             }
             catch(XmlException ex)
             {
+                Log.Logger.Error(ex, string.Empty);
                 return new FileParsingResult
                 {
                     IsValid = false,
@@ -60,9 +56,15 @@ namespace TransactionService.BLL.Services.Implementations
                 };
             }
             var transactionXmlElements = xDocument.Root.Elements("Transaction");
+            var parsingResults = ParseTransactionXmlElements(transactionXmlElements);
+            return GetFileParsingResult(parsingResults);
+        }
+
+        private IEnumerable<RecordParsingResult> ParseTransactionXmlElements(IEnumerable<XElement> transactionXmlElements)
+        {
             var xmlSerializer = new XmlSerializer(typeof(XmlRawTransactionRecord));
 
-            var parsingResults = transactionXmlElements.Select(el =>
+            return transactionXmlElements.Select(el =>
             {
                 var rawRecord = (XmlRawTransactionRecord)xmlSerializer.Deserialize(el.CreateReader());
                 bool isValid = rawRecord.TryConvertToTransactionRecord(out var record);
@@ -72,19 +74,23 @@ namespace TransactionService.BLL.Services.Implementations
                     Record = record,
                     RawString = el.ToString()
                 };
-            }).ToList();
+            });
+        }
+
+        private FileParsingResult GetFileParsingResult(IEnumerable<RecordParsingResult> parsingResults)
+        {
+            var notValidatedRecords = parsingResults.Where(r => !r.IsValid).Select(r => r.RawString);
+            foreach(var rawString in notValidatedRecords)
+            {
+                Log.Logger.Warning(rawString);
+            }
 
             return new FileParsingResult
             {
                 IsValid = !parsingResults.Any(r => !r.IsValid),
                 ValidTransactions = parsingResults.Where(r => r.IsValid).Select(r => r.Record),
-                NotValidatedRecords = parsingResults.Where(r => !r.IsValid).Select(r => r.RawString)
+                NotValidatedRecords = notValidatedRecords
             };
-        }
-
-        public Task SaveTransactions(IEnumerable<TransactionRecord> transactions)
-        {
-            throw new NotImplementedException();
         }
     }
 }
