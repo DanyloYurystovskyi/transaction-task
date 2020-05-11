@@ -60,7 +60,7 @@ namespace TransactionService.Controllers
         {
             if (!Enum.TryParse(typeof(TransactionRecordStatus), status, false, out var statusObj))
             {
-                return BadRequest("This is not correct status: Approved, Failed or Finished");
+                return BadRequest("This is not correct status: Approved, Rejected or Done");
             }
 
             var transactions = await _databaseService.GetTransactionRecordsByStatus((TransactionRecordStatus)statusObj);

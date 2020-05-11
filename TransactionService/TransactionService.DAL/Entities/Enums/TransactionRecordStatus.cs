@@ -8,7 +8,7 @@ namespace TransactionService.DAL.Entities.Enums
     {
         None = 'N',
         Approved = 'A',
-        Failed = 'R', //Rejected
-        Finished = 'D' //Done
+        Rejected = 'R',
+        Done = 'D'
     }
 }
