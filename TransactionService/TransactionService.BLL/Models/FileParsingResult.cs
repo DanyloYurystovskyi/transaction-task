@@ -11,8 +11,6 @@ namespace TransactionService.BLL.Models
 
         public IEnumerable<TransactionRecord> ValidTransactions { get; set; }
 
-        public string ErrorMessage { get; set; }
-
         public IEnumerable<string> NotValidatedRecords { get; set; }
     }
 }

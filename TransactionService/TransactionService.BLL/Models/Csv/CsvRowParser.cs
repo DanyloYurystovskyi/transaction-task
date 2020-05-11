@@ -20,33 +20,33 @@ namespace TransactionService.BLL.Models.Csv
         {
             bool isValid = true;
             //TransactionId
-            string transactionId = null;
+            string transactionId = default;
             isValid = isValid && row.TryGetField(0, out transactionId) && transactionId.Length <= 50;
             //Amount
-            decimal amount = 0m;
+            decimal amount = default;
             isValid = isValid && row.TryGetField(1, out amount);
             //CurrencyCode
-            string currency = null;
+            string currency = default;
             isValid = isValid && row.TryGetField(2, out currency) && currency.IsISO4217();
             //Date
-            DateTime date = new DateTime();
+            DateTime date = default;
             isValid = isValid && TryParseTransactionDate(row, out date);
             //Status
             TransactionRecordStatus status = TransactionRecordStatus.None;
             isValid = isValid && TryParseTransactionRecordStatus(row, out status);
 
-            return new CsvRowParsingResult
+            return new RecordParsingResult
             {
                 IsValid = isValid,
-                RawRow = row.Context.RawRecord,
-                Record = new TransactionRecord
+                RawString = row.Context.RawRecord,
+                Record = isValid ? new TransactionRecord
                 {
                     TransactionId = transactionId,
                     Amount = amount,
                     CurrencyCode = currency,
                     Date = date,
                     Status = status
-                }
+                } : null
             };
         }
 

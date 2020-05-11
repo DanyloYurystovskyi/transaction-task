@@ -6,8 +6,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using TransactionService.BLL.Extensions;
 using TransactionService.BLL.Models;
@@ -43,40 +45,34 @@ namespace TransactionService.BLL.Services.Implementations
             {
                 IsValid = !resultContainers.Any(c => !c.Result.IsValid),
                 ValidTransactions = resultContainers.Where(c => c.Result.IsValid).Select(c => c.Result.Record),
-                NotValidatedRecords = resultContainers.Where(c => !c.Result.IsValid).Select(c => c.Result.RawRow)
+                NotValidatedRecords = resultContainers.Where(c => !c.Result.IsValid).Select(c => c.Result.RawString)
             };
         }
 
         public async Task<FileParsingResult> ParseXmlFile(Stream stream)
         {
-            var xmlSerializer = new XmlSerializer(typeof(List<XmlRawTransactionRecord>), new XmlRootAttribute("Transactions"));
-            var xmlReaderSettings = new XmlReaderSettings();
-            xmlReaderSettings.Async = true;
-            var xmlReader = XmlReader.Create(stream, xmlReaderSettings);
+            var xDoc = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, CancellationToken.None);
+            var transactionXmlElements = xDoc.Root.Elements("Transaction");
+            var xmlSerializer = new XmlSerializer(typeof(XmlRawTransactionRecord));
 
-            try
+            var parsingResults = transactionXmlElements.Select(el =>
             {
-                var rawRecords = (List<XmlRawTransactionRecord>)xmlSerializer.Deserialize(xmlReader);
-                var validTransactions = rawRecords
-                    .Where(r => r.IsValid())
-                    .Select(r => r.ConvertToTransactionRecord())
-                    .ToList();
-                return new FileParsingResult
+                var rawRecord = (XmlRawTransactionRecord)xmlSerializer.Deserialize(el.CreateReader());
+                bool isValid = rawRecord.TryConvertToTransactionRecord(out var record);
+                return new RecordParsingResult
                 {
-                    IsValid = rawRecords.Count == validTransactions.Count,
-                    ValidTransactions = validTransactions
+                    IsValid = isValid,
+                    Record = record,
+                    RawString = el.ToString()
                 };
-            }
-            catch (InvalidOperationException ex)
+            }).ToList();
+
+            return new FileParsingResult
             {
-                return new FileParsingResult
-                {
-                    IsValid = false,
-                    ErrorMessage = ex.Message,
-                    ValidTransactions = { },
-                    NotValidatedRecords = new string[] { await xmlReader.ReadElementContentAsStringAsync() },
-                };
-            }
+                IsValid = !parsingResults.Any(r => !r.IsValid),
+                ValidTransactions = parsingResults.Where(r => r.IsValid).Select(r => r.Record),
+                NotValidatedRecords = parsingResults.Where(r => !r.IsValid).Select(r => r.RawString)
+            };
         }
 
         public Task SaveTransactions(IEnumerable<TransactionRecord> transactions)
